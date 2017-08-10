@@ -14,8 +14,29 @@ public class FunctionNode extends CalculatorNode
 	}
 
 
-	CalculatorNode leftNode;
-	CalculatorNode rightNode;
+	private CalculatorNode leftNode;
+	
+	public CalculatorNode getLeftNode() {
+		return leftNode;
+	}
+
+
+	public void setLeftNode(CalculatorNode leftNode) {
+		this.leftNode = leftNode;
+	}
+
+
+	public CalculatorNode getRightNode() {
+		return rightNode;
+	}
+
+
+	public void setRightNode(CalculatorNode rightNode) {
+		this.rightNode = rightNode;
+	}
+
+
+	private CalculatorNode rightNode;
 	
 	
 	FunctionNode(FunctionType argFunctionType,

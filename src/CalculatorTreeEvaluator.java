@@ -6,7 +6,11 @@ public class CalculatorTreeEvaluator
 	
 	public static int evaluateTree(CalculatorNode aNode)
 	{
-		if (aNode.getNodeType() == NodeType.FUNCTION)
+		
+		if (aNode.getNodeType() == NodeType.NUMBER)
+		{
+			return ((NumberNode) aNode).getNodeValue();
+		} else if (aNode.getNodeType() == NodeType.FUNCTION)
 		{
 			//handle each function type here properly
 			
@@ -14,6 +18,9 @@ public class CalculatorTreeEvaluator
 			
 			if (functionNode.getFunctionType() == FunctionType.ADD)
 			{
+				
+				return evaluateTree(functionNode.getLeftNode()) + evaluateTree(functionNode.getRightNode());
+				/*
 				if (functionNode.leftNode.getNodeType() == NodeType.NUMBER
 						&& functionNode.rightNode.getNodeType() == NodeType.NUMBER)
 				{
@@ -22,41 +29,49 @@ public class CalculatorTreeEvaluator
 					
 					return leftNumberNode.getNodeValue() + rightNumberNode.getNodeValue();
 					
-				}
+				}*/
 				
 			} else if (functionNode.getFunctionType() == FunctionType.SUB)
 			{
-				if (functionNode.leftNode.getNodeType() == NodeType.NUMBER
-						&& functionNode.rightNode.getNodeType() == NodeType.NUMBER)
+				return evaluateTree(functionNode.getLeftNode()) - evaluateTree(functionNode.getRightNode());
+				/*
+				if (functionNode.getLeftNode().getNodeType() == NodeType.NUMBER
+						&& functionNode.getRightNode().getNodeType() == NodeType.NUMBER)
 				{
-					NumberNode leftNumberNode = (NumberNode) functionNode.leftNode;
-					NumberNode rightNumberNode = (NumberNode) functionNode.rightNode;
+					NumberNode leftNumberNode = (NumberNode) functionNode.getLeftNode();
+					NumberNode rightNumberNode = (NumberNode) functionNode.getRightNode();
 					
 					return leftNumberNode.getNodeValue() - rightNumberNode.getNodeValue();
 					
-				}
+				}*/
 			} else if (functionNode.getFunctionType() == FunctionType.MULT)
 			{
-				if (functionNode.leftNode.getNodeType() == NodeType.NUMBER
-						&& functionNode.rightNode.getNodeType() == NodeType.NUMBER)
+				
+				return evaluateTree(functionNode.getLeftNode()) * evaluateTree(functionNode.getRightNode()); 
+				/*
+				if (functionNode.getLeftNode().getNodeType() == NodeType.NUMBER
+						&& functionNode.getRightNode().getNodeType() == NodeType.NUMBER)
 				{
-					NumberNode leftNumberNode = (NumberNode) functionNode.leftNode;
-					NumberNode rightNumberNode = (NumberNode) functionNode.rightNode;
+					NumberNode leftNumberNode = (NumberNode) functionNode.getLeftNode();
+					NumberNode rightNumberNode = (NumberNode) functionNode.getRightNode();
 					
 					return leftNumberNode.getNodeValue() * rightNumberNode.getNodeValue();
 					
-				}
+				}*/
 			} else if (functionNode.getFunctionType() == FunctionType.DIV)
 			{
-				if (functionNode.leftNode.getNodeType() == NodeType.NUMBER
-						&& functionNode.rightNode.getNodeType() == NodeType.NUMBER)
+				
+				return evaluateTree(functionNode.getLeftNode()) / evaluateTree(functionNode.getRightNode());
+				/*
+				if (functionNode.getLeftNode().getNodeType() == NodeType.NUMBER
+						&& functionNode.getRightNode().getNodeType() == NodeType.NUMBER)
 				{
-					NumberNode leftNumberNode = (NumberNode) functionNode.leftNode;
-					NumberNode rightNumberNode = (NumberNode) functionNode.rightNode;
+					NumberNode leftNumberNode = (NumberNode) functionNode.getLeftNode();
+					NumberNode rightNumberNode = (NumberNode) functionNode.getRightNode();
 					
 					return leftNumberNode.getNodeValue() / rightNumberNode.getNodeValue();
 					
-				}
+				}*/
 			}
 			
 		}

@@ -89,5 +89,50 @@ public class CalculatorTreeEvaluatorTest {
 		assertEquals(result, expected);
 	}
 	
+	@Test
+	public void testMultiplicationExpression()
+	{
+		
+		FunctionNode leftNode = new FunctionNode(FunctionType.MULT,
+												new NumberNode(3),
+												new NumberNode(2));
+		FunctionNode rightNode = new FunctionNode(FunctionType.MULT, 
+				new NumberNode(2), new NumberNode(2));
+		
+		FunctionNode exprTree = new FunctionNode(FunctionType.MULT,
+									leftNode,
+									rightNode);
+		
+		int result = CalculatorTreeEvaluator.evaluateTree(exprTree);
+		int expected = 24;
+		
+		assertEquals(result, expected);
+		
+		
+		
+	}
+	
+	@Test
+	public void testDivisionExpression()
+	{
+		
+		FunctionNode leftNode = new FunctionNode(FunctionType.DIV,
+												new NumberNode(6),
+												new NumberNode(2));
+		FunctionNode rightNode = new FunctionNode(FunctionType.MULT, 
+				new NumberNode(2), new NumberNode(2));
+		
+		FunctionNode exprTree = new FunctionNode(FunctionType.MULT,
+									leftNode,
+									rightNode);
+		
+		int result = CalculatorTreeEvaluator.evaluateTree(exprTree);
+		int expected = 12;
+		
+		assertEquals(result, expected);
+		
+		
+	}
+	
 
 }
