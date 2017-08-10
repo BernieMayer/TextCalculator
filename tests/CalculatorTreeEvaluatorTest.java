@@ -134,5 +134,78 @@ public class CalculatorTreeEvaluatorTest {
 		
 	}
 	
+	@Test
+	public void testLetExpression()
+	{
+		//The let expression will be
+		//let(a, 5, add(a,a))
+		
+		VariableNode aNode = new VariableNode('a'); 
+		FunctionNode variableAddExpression = new FunctionNode(FunctionType.ADD, aNode, aNode);
+		
+		LetNode letNode = new LetNode('a', new NumberNode(5), variableAddExpression);
+		
+		int result = CalculatorTreeEvaluator.evaluateTree(letNode);
+		int expected = 10;
+		
+		assertEquals(result, expected);
+	}
+	
+	@Test
+	public void testNestedLetExpression()
+	{
+		//The expression will be
+		
+		// let(a, 5, let(b, mult(a, 10), add(b, a)))
+		
+		VariableNode aNode = new VariableNode('a');
+		VariableNode bNode = new VariableNode('b');
+		
+		LetNode bLetNode = new LetNode('b',
+								new FunctionNode(FunctionType.MULT, aNode, new NumberNode(10)),
+								new FunctionNode(FunctionType.ADD, bNode, aNode));
+		
+		LetNode aLetNode = new LetNode('a', 
+								new NumberNode(5),
+								bLetNode);
+		
+		int result = CalculatorTreeEvaluator.evaluateTree(aLetNode);
+		int expected = 55;
+		
+		assertEquals(expected, result);
+		
+		
+	}
+	
+	
+	@Test
+	public void testVariableReuseInLetStatement()
+	{
+		//The statement testing here is
+		//let(a, let(b, 10, add(b, b)), let(b, 20, add(a,b))
+		
+		VariableNode aNode = new VariableNode('a');
+		VariableNode bNode = new VariableNode('b');
+		
+		LetNode firstB_LetExpr = new LetNode('b', new NumberNode(10),
+										new FunctionNode(FunctionType.ADD,
+											bNode,
+											bNode));
+		
+		LetNode secondB_LetExpr = new LetNode('b',
+										new NumberNode(20),
+										new FunctionNode(FunctionType.ADD, 
+														 aNode, bNode));
+		
+		LetNode finalExpr = new LetNode('a', firstB_LetExpr, 
+											 secondB_LetExpr);
+		
+		int result = CalculatorTreeEvaluator.evaluateTree(finalExpr);
+		int expected = 40;
+		
+		assertEquals(expected, result);
+				
+		
+	}
 
 }

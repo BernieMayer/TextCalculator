@@ -2,9 +2,24 @@
 public class LetNode extends CalculatorNode
 {
 	
-	char variableName;
-	CalculatorNode variableValue;
-	CalculatorNode variableExpression;
+	private char variableName;
+	public char getVariableName() {
+		return variableName;
+	}
+
+
+	public CalculatorNode getVariableValue() {
+		return variableValue;
+	}
+
+
+	public CalculatorNode getVariableExpression() {
+		return variableExpression;
+	}
+
+
+	private CalculatorNode variableValue;
+	private CalculatorNode variableExpression;
 	
 	
 	public LetNode(char argVariableName, 
