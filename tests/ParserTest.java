@@ -75,6 +75,41 @@ public class ParserTest {
 	}
 	
 	@Test
+	public void testInvalidFunction()
+	{
+		String expression = " abc(1, 1)";
+		
+		try 
+		{
+			Parser aParser = new Parser();
+			aParser.parse(expression);
+			
+		} catch (ParserException e)
+		{
+			e.printStackTrace();
+			
+			return; //An error was thrown
+			//success("Error was thrown");
+		}	
+	}
+	
+	
+	@Test
+	public void testInvalidNumberOfArguments()
+	{
+		String expression = "add(1)";
+		
+		try {
+			Parser aParser = new Parser();
+			aParser.parse(expression);
+		} catch (ParserException e)
+		{
+			e.printStackTrace();
+			return;
+		}
+	}
+	
+	@Test
 	public void testLetStatements()
 	{
 		String expression = "let(a, 5, add(a,a))";
