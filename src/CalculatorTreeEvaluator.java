@@ -78,7 +78,7 @@ public class CalculatorTreeEvaluator
 		{
 			LetNode letNode = (LetNode) aNode;
 			
-			char variableName = letNode.getVariableName();
+			String variableName = letNode.getVariableName();
 			int variableValue = evaluateTree(letNode.getVariableValue());
 			CalculatorNode variableExpression = letNode.getVariableExpression();
 			
@@ -97,12 +97,12 @@ public class CalculatorTreeEvaluator
 		
 	}
 	
-	private static CalculatorNode replaceVariables(char varName ,CalculatorNode variableExpression, int value)
+	private static CalculatorNode replaceVariables(String varName ,CalculatorNode variableExpression, int value)
 	{
 		if (variableExpression.getNodeType() == NodeType.VARIABLE)
 		{
 			VariableNode varNode = (VariableNode) variableExpression;
-			if (varNode.getVariableName() == varName)
+			if (varNode.getVariableName().equals(varName))
 			{
 			return new NumberNode(value);
 			} else {

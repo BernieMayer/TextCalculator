@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class Parser 
 {
 	
-	ArrayList<Character> validVariables;
+	ArrayList<String> validVariables;
 	
 	enum ParserState {
 		SEARCHING_FOR_FUNCTION,
@@ -13,7 +13,7 @@ public class Parser
 	
 	public Parser()
 	{
-		this.validVariables = new ArrayList<Character> ();
+		this.validVariables = new ArrayList<String> ();
 	}
 	
 	public  CalculatorNode parse(String expression) throws ParserException
@@ -28,6 +28,14 @@ public class Parser
 		StringBuilder currentNumber = new StringBuilder();
 		
 		boolean isNumber = false;
+		
+		
+		//check to see if the string matches a variable...
+		
+		if (validVariables.contains(expression.trim()))
+		{
+			return new VariableNode(expression.trim());
+		}
 		
 		
 		for (int i = startIndex; i < expression.length(); i++)
@@ -54,11 +62,11 @@ public class Parser
 				currentFunction.append(currentChar);
 				
 			} 
-			if (currentChar == '(')
+			if (currentChar == '(' )
 			{
 				String functionString = currentFunction.toString();
 				FunctionNode functionNode;
-				FunctionType functionType;
+				FunctionType functionType = null;
 				if (functionString.equalsIgnoreCase(FunctionType.ADD.functionName())) {
 					functionType = FunctionType.ADD;
 				} else if (functionString.equalsIgnoreCase(FunctionType.SUB.functionName())) {
@@ -67,8 +75,30 @@ public class Parser
 					functionType = FunctionType.DIV;
 				} else if (functionString.equalsIgnoreCase(FunctionType.MULT.functionName())) {
 					functionType = FunctionType.MULT;
-				}
-				else {
+				} else if (functionString.equalsIgnoreCase(FunctionType.LET.functionName())) {
+					//handle any let statement code here...
+					String[] arguments = searchForParameters(expression, i + 1);
+					
+					
+					
+					String variableName = arguments[0].trim();
+					
+					if (variableName.matches("[a-zA-Z]+")) {
+						this.validVariables.add(variableName);
+					}
+					
+					//now handle the value part of the let statement
+					CalculatorNode valueOfVariable = parse(arguments[1]);
+					
+					//now handle the expression part of the let statement
+					
+					CalculatorNode letExpression = parse(arguments[2]);
+					
+					LetNode letNode = new LetNode(variableName, valueOfVariable, letExpression);
+					return letNode;
+					
+					
+				} else {
 					System.out.println("Invalid function, " + functionString + " is not a valid function");
 					throw new ParserException();
 				}

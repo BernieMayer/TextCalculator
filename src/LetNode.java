@@ -2,8 +2,8 @@
 public class LetNode extends CalculatorNode
 {
 	
-	private char variableName;
-	public char getVariableName() {
+	private String variableName;
+	public String getVariableName() {
 		return variableName;
 	}
 
@@ -22,7 +22,7 @@ public class LetNode extends CalculatorNode
 	private CalculatorNode variableExpression;
 	
 	
-	public LetNode(char argVariableName, 
+	public LetNode(String argVariableName, 
 			CalculatorNode argValue,
 			CalculatorNode argExpression)
 	{

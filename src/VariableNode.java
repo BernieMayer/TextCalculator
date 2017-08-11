@@ -2,13 +2,13 @@
 public class VariableNode extends CalculatorNode 
 {
 
-	private char variableName;
+	private String variableName;
 
-	public char getVariableName() {
+	public String getVariableName() {
 		return variableName;
 	}
 	
-	public VariableNode(char varName)
+	public VariableNode(String varName)
 	{
 		super(NodeType.VARIABLE);
 		this.variableName = varName;
