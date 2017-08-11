@@ -4,7 +4,8 @@ public enum FunctionType
 	ADD("add"),
 	SUB("sub"),
 	MULT("mult"),
-	DIV("div");
+	DIV("div"),
+	LET("let");
 	
 	private String functionName;
 	

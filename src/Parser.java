@@ -3,34 +3,59 @@ import java.util.ArrayList;
 public class Parser 
 {
 	
+	ArrayList<Character> validVariables;
+	
 	enum ParserState {
 		SEARCHING_FOR_FUNCTION,
 		SEARCHING_FOR_CLOSING_BRACKET,
 		SEARCHING_FOR_COMMA
 	}
 	
-	public static CalculatorNode parse(String expression) throws ParserException
+	public Parser()
+	{
+		this.validVariables = new ArrayList<Character> ();
+	}
+	
+	public  CalculatorNode parse(String expression) throws ParserException
 	{
 		return parse(expression, 0);
 	}
 	
-	private static CalculatorNode parse(String expression, int startIndex) throws ParserException
+	private CalculatorNode parse(String expression, int startIndex) throws ParserException
 	{
 		 
 		StringBuilder currentFunction = new StringBuilder();
+		StringBuilder currentNumber = new StringBuilder();
+		
+		boolean isNumber = false;
+		
 		
 		for (int i = startIndex; i < expression.length(); i++)
 		{
 			char currentChar = expression.charAt(i);
 			
+			if (isNumber && isNumber(currentChar))
+			{
+				currentNumber.append(currentChar);
+			} else if (isNumber(currentChar))
+			{
+				currentNumber.append(currentChar);
+				isNumber = true;
+			} else if (isNumber && (currentChar == ' ' || currentChar == ',' 
+													|| (i == (expression.length() - 1))))
+			{
+				return new NumberNode(Integer.parseInt(currentNumber.toString()));
+			}
+			
+			
 			if (currentChar != ' ' && currentChar != '(')
 			{
+				
 				currentFunction.append(currentChar);
 				
 			} 
 			if (currentChar == '(')
 			{
-				System.out.println("Seeing a (");
 				String functionString = currentFunction.toString();
 				FunctionNode functionNode;
 				FunctionType functionType;
@@ -42,7 +67,8 @@ public class Parser
 					functionType = FunctionType.DIV;
 				} else if (functionString.equalsIgnoreCase(FunctionType.MULT.functionName())) {
 					functionType = FunctionType.MULT;
-				} else {
+				}
+				else {
 					System.out.println("Invalid function, " + functionString + " is not a valid function");
 					throw new ParserException();
 				}
@@ -51,19 +77,24 @@ public class Parser
 				
 				String firstParameterString = arguments[0];
 				
-				CalculatorNode leftNode = parseArgument(firstParameterString);
-				
+				//CalculatorNode leftNode = parseArgument(firstParameterString);
+				CalculatorNode leftNode = parse(firstParameterString);
 				
 				String secondParamaterString = arguments[1];
 				
-				CalculatorNode rightNode = parseArgument(secondParamaterString);
-				
+				//CalculatorNode rightNode = parseArgument(secondParamaterString);
+				CalculatorNode rightNode = parse(secondParamaterString);
 				
 				functionNode = new FunctionNode(functionType, leftNode, rightNode);
 				return functionNode;
 
 				
 			}	
+		}
+		
+		if (isNumber)
+		{
+			return new NumberNode(Integer.parseInt(currentNumber.toString()));
 		}
 		
 		return new NumberNode(0);	//Not yet implemented
@@ -177,14 +208,7 @@ public class Parser
 	
 	private static CalculatorNode processNumber(String argument) throws ParserException
 	{
-		
-		String test = "2, (3), (4 * 5))";
-		
-		String[] results = searchForParameters(test, 0);
-		for (String s:results)
-			System.out.println("Testing searchForParameters " + s );
-		
-		System.out.println("ProcessNumber is with argument " + argument);
+
 		StringBuilder currentNum = new StringBuilder();
 		for (int i = 0; i < argument.length(); i++)
 		{
@@ -245,20 +269,7 @@ public class Parser
 	}*/
 	
 	public static void main(String[] args){
-		
-		System.out.println("Is k working correctly " + isLetter('k'));
-		System.out.println("Is a working correctly " + isLetter('a'));
-		System.out.println("Is R working correctly " + isLetter('R'));
-		System.out.println("Is - working correctly " + isLetter('-'));
-		
-		System.out.println("Starting the parser");
-		try {
-			//parse("add(1,1)");
-			parse("add(1, mult(2, 3))");
-		} catch (ParserException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+	
 	}
 
 }
