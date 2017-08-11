@@ -27,5 +27,21 @@ public class CalculatorManager
 		
 		
 	}
+	
+	public int runQuery(String query)
+	{
+		CalculatorNode aNode = null;
+		Parser aParser = new Parser();
+		
+		try {
+			aNode = aParser.parse(query);
+		} catch (ParserException e)
+		{
+			e.printStackTrace();
+		}
+		
+		return CalculatorTreeEvaluator.evaluateTree(aNode);
+		
+	}
 
 }
