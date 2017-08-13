@@ -85,16 +85,8 @@ public class Parser
 													|| (i == (expression.length() - 1))))
 			{
 				String currentNumberString = currentNumber.toString();
-				//makes sure the currentNumberString only has numbers
-				//currentFunction should be zero because the parser is expecting
-				//only numbers at this point so nothing should be 
-				//in the currentFunction StringBuiler
-				if (currentNumberString.matches("[0-9]+") && (currentFunction.length() == 0) ) {
-				 return new NumberNode(Integer.parseInt(currentNumberString));
-				} else {
-					//System.out.println(expression.substring(startIndex, expression.length()));
-					throw new ParserException();
-				}
+				return new NumberNode(Integer.parseInt(currentNumberString));
+				
 			}
 			
 			

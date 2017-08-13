@@ -50,6 +50,31 @@ public class FunctionNode extends CalculatorNode
 		this.rightNode = argRightNode;
 	}
 	
+	public int performFunction()
+	{
+		if (this.getFunctionType() == FunctionType.ADD)
+		{
+			
+			return CalculatorTreeEvaluator.evaluateTree(this.getLeftNode()) + CalculatorTreeEvaluator.evaluateTree(this.getRightNode());
+			
+		} else if (this.getFunctionType() == FunctionType.SUB)
+		{
+			return CalculatorTreeEvaluator.evaluateTree(this.getLeftNode()) - CalculatorTreeEvaluator.evaluateTree(this.getRightNode());
+
+		} else if (this.getFunctionType() == FunctionType.MULT)
+		{
+			
+			return CalculatorTreeEvaluator.evaluateTree(this.getLeftNode()) * CalculatorTreeEvaluator.evaluateTree(this.getRightNode()); 
+
+		} else if (this.getFunctionType() == FunctionType.DIV)
+		{
+			
+			return CalculatorTreeEvaluator.evaluateTree(this.getLeftNode()) / CalculatorTreeEvaluator.evaluateTree(this.getRightNode());
+			
+		}
+		return 0; //If no function can be performed 0 will be returned
+	}
+	
 	
 
 }

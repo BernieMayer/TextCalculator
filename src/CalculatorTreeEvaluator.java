@@ -7,7 +7,7 @@ public class CalculatorTreeEvaluator
 	 * This method will take in a node and will traverse the 
 	 * nodes tree to find out the result of that nodes calculations
 	 * This method is recursive in nature. Nodes that are children of aNode will be procced
-	 * recursively
+	 * 
 	 * 
 	 * @param The currentNode that is being evaluated
 	 * @return The result of evaluating the tree
@@ -25,26 +25,7 @@ public class CalculatorTreeEvaluator
 			
 			FunctionNode functionNode = (FunctionNode) aNode;
 			
-			if (functionNode.getFunctionType() == FunctionType.ADD)
-			{
-				
-				return evaluateTree(functionNode.getLeftNode()) + evaluateTree(functionNode.getRightNode());
-				
-			} else if (functionNode.getFunctionType() == FunctionType.SUB)
-			{
-				return evaluateTree(functionNode.getLeftNode()) - evaluateTree(functionNode.getRightNode());
-
-			} else if (functionNode.getFunctionType() == FunctionType.MULT)
-			{
-				
-				return evaluateTree(functionNode.getLeftNode()) * evaluateTree(functionNode.getRightNode()); 
-	
-			} else if (functionNode.getFunctionType() == FunctionType.DIV)
-			{
-				
-				return evaluateTree(functionNode.getLeftNode()) / evaluateTree(functionNode.getRightNode());
-				
-			}
+			return functionNode.performFunction();
 			
 		} else if (aNode.getNodeType() == NodeType.LET )
 		{
