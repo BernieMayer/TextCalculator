@@ -67,6 +67,7 @@ public class Parser
 				String functionString = currentFunction.toString();
 				FunctionNode functionNode;
 				FunctionType functionType = null;
+				
 				if (functionString.equalsIgnoreCase(FunctionType.ADD.functionName())) {
 					functionType = FunctionType.ADD;
 				} else if (functionString.equalsIgnoreCase(FunctionType.SUB.functionName())) {
@@ -77,25 +78,7 @@ public class Parser
 					functionType = FunctionType.MULT;
 				} else if (functionString.equalsIgnoreCase(FunctionType.LET.functionName())) {
 					//handle any let statement code here...
-					String[] arguments = searchForParameters(expression, i + 1);
-					
-					
-					
-					String variableName = arguments[0].trim();
-					
-					if (variableName.matches("[a-zA-Z]+")) {
-						this.validVariables.add(variableName);
-					}
-					
-					//now handle the value part of the let statement
-					CalculatorNode valueOfVariable = parse(arguments[1]);
-					
-					//now handle the expression part of the let statement
-					
-					CalculatorNode letExpression = parse(arguments[2]);
-					
-					LetNode letNode = new LetNode(variableName, valueOfVariable, letExpression);
-					return letNode;
+					return handleLetExpression(expression, i);
 					
 					
 				} else {
@@ -104,20 +87,24 @@ public class Parser
 				}
 				
 				String[] arguments = searchForParameters(expression, i + 1);
+				if  (functionType.getNumArguments() == arguments.length) {
+					
+					
+					String firstParameterString = arguments[0];
 				
-				String firstParameterString = arguments[0];
+					CalculatorNode leftNode = parse(firstParameterString);
+					
+					String secondParamaterString = arguments[1];
 				
-				//CalculatorNode leftNode = parseArgument(firstParameterString);
-				CalculatorNode leftNode = parse(firstParameterString);
-				
-				String secondParamaterString = arguments[1];
-				
-				//CalculatorNode rightNode = parseArgument(secondParamaterString);
-				CalculatorNode rightNode = parse(secondParamaterString);
-				
-				functionNode = new FunctionNode(functionType, leftNode, rightNode);
-				return functionNode;
-
+					CalculatorNode rightNode = parse(secondParamaterString);
+					
+					functionNode = new FunctionNode(functionType, leftNode, rightNode);
+					return functionNode;
+				} else {
+					System.out.println("Not valid number of arguments for function " + functionType.functionName()
+										+ " was expecting " + functionType.getNumArguments() + " But got " + arguments.length);
+					throw new ParserException();
+				}
 				
 			}	
 		}
@@ -130,6 +117,34 @@ public class Parser
 		return new NumberNode(0);	//Not yet implemented
 	
 		
+	}
+
+	/**
+	 * @param expression
+	 * @param i
+	 * @return
+	 * @throws ParserException
+	 */
+	private CalculatorNode handleLetExpression(String expression, int i) throws ParserException {
+		String[] arguments = searchForParameters(expression, i + 1);
+		
+		
+		
+		String variableName = arguments[0].trim();
+		
+		if (variableName.matches("[a-zA-Z]+")) {
+			this.validVariables.add(variableName);
+		}
+		
+		//now handle the value part of the let statement
+		CalculatorNode valueOfVariable = parse(arguments[1]);
+		
+		//now handle the expression part of the let statement
+		
+		CalculatorNode letExpression = parse(arguments[2]);
+		
+		LetNode letNode = new LetNode(variableName, valueOfVariable, letExpression);
+		return letNode;
 	}
 	
 	
@@ -186,6 +201,10 @@ public class Parser
 			} else if (currentChar == ')')
 			{
 				numOpenBrackets--;
+				if (numOpenBrackets == -1)
+				{
+					argumentList.add(expression.substring(currentArgumentStart, i));
+				}
 			} else if (currentChar == '(')
 			{
 				numOpenBrackets++;
@@ -298,7 +317,14 @@ public class Parser
 		
 	}*/
 	
-	public static void main(String[] args){
+	public static void main(String[] args)
+	{
+		Parser aParser = new Parser();
+		
+		String[] functionArgs = aParser.searchForParameters("1, 2)  ", 0);
+		for (String arg:functionArgs)
+			System.out.println(arg);
+		
 	
 	}
 

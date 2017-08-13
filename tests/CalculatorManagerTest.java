@@ -4,15 +4,37 @@ import org.junit.Test;
 
 public class CalculatorManagerTest {
 
-	@Test
-	public void test() {
-		fail("Not yet implemented");
-	}
 	
 	@Test
 	public void testWhiteSpace()
 	{
 		String expression = "     add(1, 1)    ";
+		
+		CalculatorManager manager = new CalculatorManager();
+		
+		int result = manager.runQuery(expression);
+		int expected = 2;
+		
+		assertEquals(expected, result);
+	}
+	
+	@Test
+	public void testWhiteSpaceBeforeFunction()
+	{
+		String expression = "     add(1, 1)";
+		
+		CalculatorManager manager = new CalculatorManager();
+		
+		int result = manager.runQuery(expression);
+		int expected = 2;
+		
+		assertEquals(expected, result);
+	}
+	
+	@Test
+	public void testWhiteSpaceAfterFunction()
+	{
+		String expression = "add(1, 1)    ";
 		
 		CalculatorManager manager = new CalculatorManager();
 		
@@ -112,7 +134,7 @@ public class CalculatorManagerTest {
 		CalculatorManager manager = new CalculatorManager();
 		
 		int result = manager.runQuery(expression);
-		int expected = 55;
+		int expected = 40;
 		
 		assertEquals(expected, result);
 	}
