@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public enum FunctionType 
 {
@@ -18,7 +18,9 @@ public enum FunctionType
 		return numArguments;
 	}
 
-	private static ArrayList<String> functionNames = new ArrayList<String> ();
+	private static HashSet<String> functionNames = new HashSet<String> ();
+	//private static Hashtable<String> functionNames = new Hashtable<String> ();
+	
 	//This static block will iterate through all of the enums's in
 	//the function types and add them to a functionNames list
 	//This makes the FunctionType code more maintainable
@@ -26,7 +28,7 @@ public enum FunctionType
 	{
 		for (FunctionType aFunctionType:FunctionType.values())
 		{
-			functionNames.add(aFunctionType.functionName());
+			functionNames.add(aFunctionType.functionName().toUpperCase());
 		}
 	}
 	
@@ -53,18 +55,7 @@ public enum FunctionType
 	 */
 	static boolean isValidFunction(String argFunctionName)
 	{
-		//Iterate through all of the functions 
-		//then return true if the functionName is in
-		//the list of functions
-		
-		for (String validFunctionName:functionNames )
-		{
-			if (validFunctionName.equalsIgnoreCase(argFunctionName))
-			{
-				return true;
-			}
-		}
-		return false;
+		return functionNames.contains(argFunctionName.toUpperCase());
 	}
 	
 	/**
@@ -89,6 +80,19 @@ public enum FunctionType
 		} else {
 			return false;
 		}
+	}
+	
+	static FunctionType getFunctionTypeBasedOnName(String functionName)
+	{
+		for (FunctionType functionType:FunctionType.values())
+		{
+			if (functionType.functionName.equalsIgnoreCase(functionName))
+			{
+				return functionType;
+			}
+		}
+		
+		return null;
 	}
 	
 	/**

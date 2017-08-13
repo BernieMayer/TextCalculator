@@ -95,6 +95,25 @@ public class ParserTest {
 	
 	
 	@Test
+	public void testMultipleLetterVariable()
+	{
+		String expression = "let(ab, 5, add(ab, 1))";
+		
+		Parser aParser = new Parser();
+		try {
+			CalculatorNode calculationNode = aParser.parse(expression);
+			int result = CalculatorTreeEvaluator.evaluateTree(calculationNode);
+			int expected = 6;
+			
+			assertEquals(expected, result);
+			
+		} catch (ParserException e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
 	public void testInvalidNumberOfArguments()
 	{
 		String expression = "add(1)";

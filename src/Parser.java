@@ -1,5 +1,14 @@
 import java.util.ArrayList;
 
+
+/**
+ * 
+ * @author bemayer
+ * This class aims to parse expressions that are in plain text.
+ * Expressions that are parseable will be turned into CalculatatorNode instances
+ *
+ */
+
 public class Parser 
 {
 	
@@ -16,11 +25,28 @@ public class Parser
 		this.validVariables = new ArrayList<String> ();
 	}
 	
+	/**
+	 * 
+	 * @param The expression to parse and get the calculationNode for
+	 * @return Returns a calculationNode which can be proccessed to find the result of
+	 * the expression
+	 * @throws ParserException
+	 */
+	
 	public  CalculatorNode parse(String expression) throws ParserException
 	{
 		return parse(expression, 0);
 	}
 	
+	/**
+	 * 
+	 * @param The expression to parse 
+	 * @param This is the starting point of the expression. This method will only
+	 * parse past the starting point and to the end
+	 * @return If the expression is parseable this method will return a CalculatorNode
+	 * this node can then be used to figure out the result of the expression
+	 * @throws ParserException if the expression cannot be parsed 
+	 */
 	private CalculatorNode parse(String expression, int startIndex) throws ParserException
 	{
 		 
@@ -31,10 +57,11 @@ public class Parser
 		
 		
 		//check to see if the string matches a variable...
-		
 		if (validVariables.contains(expression.trim()))
 		{
-			return new VariableNode(expression.trim());
+			//A expression that is passed into the parser that just has a 
+			//variable will only have that variable 
+			return new VariableNode(expression.trim());	
 		}
 		
 		
@@ -44,10 +71,10 @@ public class Parser
 			
 			if (isNumber && isNumber(currentChar))
 			{
-				currentNumber.append(currentChar);
+				currentNumber.append(currentChar); //add onto the currentNumber
 			} else if (isNumber(currentChar))
 			{
-				currentNumber.append(currentChar);
+				currentNumber.append(currentChar);	//start to append to the currentNumber
 				isNumber = true;
 			} else if (isNumber && (currentChar == ' ' || currentChar == ',' 
 													|| (i == (expression.length() - 1))))
@@ -66,55 +93,63 @@ public class Parser
 			{
 				String functionString = currentFunction.toString();
 				FunctionNode functionNode;
-				FunctionType functionType = null;
+				FunctionType functionType = null;				
 				
-				if (functionString.equalsIgnoreCase(FunctionType.ADD.functionName())) {
-					functionType = FunctionType.ADD;
-				} else if (functionString.equalsIgnoreCase(FunctionType.SUB.functionName())) {
-					functionType = FunctionType.SUB;
-				} else if (functionString.equalsIgnoreCase(FunctionType.DIV.functionName())) {
-					functionType = FunctionType.DIV;
-				} else if (functionString.equalsIgnoreCase(FunctionType.MULT.functionName())) {
-					functionType = FunctionType.MULT;
-				} else if (functionString.equalsIgnoreCase(FunctionType.LET.functionName())) {
-					//handle any let statement code here...
-					return handleLetExpression(expression, i);
+				if (FunctionType.isSimpleFunction(functionString)) {
+					
+					functionType = FunctionType.getFunctionTypeBasedOnName(functionString);
+				
 					
 					
+					//Separate out the arguments of the current function
+					
+					String[] arguments = searchForParameters(expression, i + 1);
+					
+					//check to see if the number of arguments matches 
+					//the number of arguments for the function
+					if  (functionType.getNumArguments() == arguments.length) {
+						
+						
+						String firstParameterString = arguments[0];
+					
+						CalculatorNode leftNode = parse(firstParameterString);
+						
+						String secondParamaterString = arguments[1];
+					
+						CalculatorNode rightNode = parse(secondParamaterString);
+						
+						functionNode = new FunctionNode(functionType, leftNode, rightNode);
+						return functionNode;
+					} else {
+						System.out.println("Not valid number of arguments for function " + functionType.functionName()
+											+ " was expecting " + functionType.getNumArguments() + " But got " + arguments.length);
+						throw new ParserException();
+					}
+				
+				} else if (FunctionType.isLetFunction(functionString)) {
+					return handleLetExpression(expression, i);	
 				} else {
-					System.out.println("Invalid function, " + functionString + " is not a valid function");
-					throw new ParserException();
-				}
-				
-				String[] arguments = searchForParameters(expression, i + 1);
-				if  (functionType.getNumArguments() == arguments.length) {
-					
-					
-					String firstParameterString = arguments[0];
-				
-					CalculatorNode leftNode = parse(firstParameterString);
-					
-					String secondParamaterString = arguments[1];
-				
-					CalculatorNode rightNode = parse(secondParamaterString);
-					
-					functionNode = new FunctionNode(functionType, leftNode, rightNode);
-					return functionNode;
-				} else {
-					System.out.println("Not valid number of arguments for function " + functionType.functionName()
-										+ " was expecting " + functionType.getNumArguments() + " But got " + arguments.length);
-					throw new ParserException();
+					throw new ParserException();	//Not a valid function
 				}
 				
 			}	
 		}
 		
+		
+		//return the number at the end of the parsing 
 		if (isNumber)
 		{
 			return new NumberNode(Integer.parseInt(currentNumber.toString()));
 		}
 		
-		return new NumberNode(0);	//Not yet implemented
+		
+		//If the code reaches here the parser cannot handle expression entered
+		System.out.println("Invalid expression, please check it over and"
+				+ " enter in a valid expression");
+		throw new ParserException();
+		
+		
+	
 	
 		
 	}
@@ -123,7 +158,7 @@ public class Parser
 	 * @param expression
 	 * @param i
 	 * @return
-	 * @throws ParserException
+	 * @throws ParserException if the expression is not valid
 	 */
 	private CalculatorNode handleLetExpression(String expression, int i) throws ParserException {
 		String[] arguments = searchForParameters(expression, i + 1);
@@ -273,7 +308,6 @@ public class Parser
 				return new NumberNode(number);	
 				
 			} else {
-				//Should not happent
 				throw new ParserException();
 			}
 		}

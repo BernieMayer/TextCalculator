@@ -3,6 +3,14 @@
 public class CalculatorTreeEvaluator 
 {
 	
+	/**
+	 * This method will take in a node and will traverse the 
+	 * nodes tree to find out the result of that nodes calculations
+	 * This method is recursive in nature. 
+	 * 
+	 * @param The currentNode that is being evaluated
+	 * @return The result of evaluating the tree
+	 */
 	
 	public static int evaluateTree(CalculatorNode aNode)
 	{
@@ -20,82 +28,68 @@ public class CalculatorTreeEvaluator
 			{
 				
 				return evaluateTree(functionNode.getLeftNode()) + evaluateTree(functionNode.getRightNode());
-				/*
-				if (functionNode.leftNode.getNodeType() == NodeType.NUMBER
-						&& functionNode.rightNode.getNodeType() == NodeType.NUMBER)
-				{
-					NumberNode leftNumberNode = (NumberNode) functionNode.leftNode;
-					NumberNode rightNumberNode = (NumberNode) functionNode.rightNode;
-					
-					return leftNumberNode.getNodeValue() + rightNumberNode.getNodeValue();
-					
-				}*/
 				
 			} else if (functionNode.getFunctionType() == FunctionType.SUB)
 			{
 				return evaluateTree(functionNode.getLeftNode()) - evaluateTree(functionNode.getRightNode());
-				/*
-				if (functionNode.getLeftNode().getNodeType() == NodeType.NUMBER
-						&& functionNode.getRightNode().getNodeType() == NodeType.NUMBER)
-				{
-					NumberNode leftNumberNode = (NumberNode) functionNode.getLeftNode();
-					NumberNode rightNumberNode = (NumberNode) functionNode.getRightNode();
-					
-					return leftNumberNode.getNodeValue() - rightNumberNode.getNodeValue();
-					
-				}*/
+
 			} else if (functionNode.getFunctionType() == FunctionType.MULT)
 			{
 				
 				return evaluateTree(functionNode.getLeftNode()) * evaluateTree(functionNode.getRightNode()); 
-				/*
-				if (functionNode.getLeftNode().getNodeType() == NodeType.NUMBER
-						&& functionNode.getRightNode().getNodeType() == NodeType.NUMBER)
-				{
-					NumberNode leftNumberNode = (NumberNode) functionNode.getLeftNode();
-					NumberNode rightNumberNode = (NumberNode) functionNode.getRightNode();
-					
-					return leftNumberNode.getNodeValue() * rightNumberNode.getNodeValue();
-					
-				}*/
+	
 			} else if (functionNode.getFunctionType() == FunctionType.DIV)
 			{
 				
 				return evaluateTree(functionNode.getLeftNode()) / evaluateTree(functionNode.getRightNode());
-				/*
-				if (functionNode.getLeftNode().getNodeType() == NodeType.NUMBER
-						&& functionNode.getRightNode().getNodeType() == NodeType.NUMBER)
-				{
-					NumberNode leftNumberNode = (NumberNode) functionNode.getLeftNode();
-					NumberNode rightNumberNode = (NumberNode) functionNode.getRightNode();
-					
-					return leftNumberNode.getNodeValue() / rightNumberNode.getNodeValue();
-					
-				}*/
+				
 			}
 			
 		} else if (aNode.getNodeType() == NodeType.LET )
 		{
-			LetNode letNode = (LetNode) aNode;
 			
-			String variableName = letNode.getVariableName();
-			int variableValue = evaluateTree(letNode.getVariableValue());
-			CalculatorNode variableExpression = letNode.getVariableExpression();
-			
-			return evaluateTree(replaceVariables(variableName,
-												 variableExpression,
-												 variableValue));
-					
-			
-			
-			
-			
+			return evaluateLetNode((LetNode) aNode);
 			
 		}
 		
-		return 0; //temporary while the method is being implemented
+		return 0; //returns 0 if the expression cannot be properly evaluated
 		
 	}
+
+	/**
+	 * 
+	 * This method will take in a letNode and will evaluate it.
+	 * Let Nodes need a bit of special processing and this method handles that 
+	 * processing 
+	 * 
+	 * @param the letNode that needs to be evaluated
+	 * @return the result of evaluating the let node
+	 */
+	private static int evaluateLetNode(LetNode letNode) {
+
+		String variableName = letNode.getVariableName();
+		int variableValue = evaluateTree(letNode.getVariableValue());
+		CalculatorNode variableExpression = letNode.getVariableExpression();
+		
+		return evaluateTree(replaceVariables(variableName,
+											 variableExpression,
+											 variableValue));
+	}
+	
+	/**
+	 * 
+	 * This method will replace and instances of a variable in a expression
+	 * 
+	 * For example a statement of let(a, 5, add(a, a)) would become add(5, 5)
+	 * after this method since instances of a will be replaced with 5
+	 * 
+	 * 
+	 * @param The name of the variable that is being replaced in the expression
+	 * @param The expression that contains the variable
+	 * @param The integer value of the variable
+	 * @return The CalculatorNode returned will be an expression that can be further evualted and
+	 * will have every instance of the variable replaced
+	 */
 	
 	private static CalculatorNode replaceVariables(String varName ,CalculatorNode variableExpression, int value)
 	{
@@ -126,12 +120,22 @@ public class CalculatorTreeEvaluator
 			return functionNode;	
 		} else if (variableExpression.getNodeType() == NodeType.LET)
 		{
+			
+			//This block will replace nested let statments correctly
+			//For example
+			//let (a, 5, let(b, add(a, b), mult(a, b)) 
+			// If this code is being run with a as the variable the expression will turn into
+			// let(b, add(5, b), mult(a,b) 
+			// at this block 
 			LetNode letNode = (LetNode)variableExpression;
 			CalculatorNode letValue = letNode.getVariableValue();
 			letValue = replaceVariables(varName, letValue, value);
 			
 			CalculatorNode letExpression = letNode.getVariableExpression();
 			letExpression = replaceVariables(varName, letExpression, value);
+			
+			//The example above will be converted to
+			//let(b, add(5, b), mult(5, b)) at this point
 			
 			return new LetNode(letNode.getVariableName(), letValue, letExpression);
 		} else {
