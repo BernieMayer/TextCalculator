@@ -54,6 +54,7 @@ public class Parser
 		StringBuilder currentNumber = new StringBuilder();
 		
 		boolean isNumber = false;
+		boolean isLetter = true;
 		
 		
 		//check to see if the string matches a variable...
@@ -69,26 +70,44 @@ public class Parser
 		{
 			char currentChar = expression.charAt(i);
 			
+			
+			
 			if (isNumber && isNumber(currentChar))
 			{
 				currentNumber.append(currentChar); //add onto the currentNumber
 			} else if (isNumber(currentChar))
 			{
+			
+				
 				currentNumber.append(currentChar);	//start to append to the currentNumber
 				isNumber = true;
 			} else if (isNumber && (currentChar == ' ' || currentChar == ',' 
 													|| (i == (expression.length() - 1))))
 			{
-				return new NumberNode(Integer.parseInt(currentNumber.toString()));
+				String currentNumberString = currentNumber.toString();
+				//makes sure the currentNumberString only has numbers
+				//currentFunction should be zero because the parser is expecting
+				//only numbers at this point so nothing should be 
+				//in the currentFunction StringBuiler
+				if (currentNumberString.matches("[0-9]+") && (currentFunction.length() == 0) ) {
+				 return new NumberNode(Integer.parseInt(currentNumberString));
+				} else {
+					//System.out.println(expression.substring(startIndex, expression.length()));
+					throw new ParserException();
+				}
 			}
 			
 			
-			if (currentChar != ' ' && currentChar != '(')
+			//Add non space and non ( to the currentFunction and 
+			//then eventually check if that string is valid
+			if (currentChar != ' ' && currentChar != '('  )
 			{
-				
+				isLetter = true;
 				currentFunction.append(currentChar);
 				
-			} 
+			}
+				
+			
 			if (currentChar == '(' )
 			{
 				String functionString = currentFunction.toString();
@@ -109,27 +128,41 @@ public class Parser
 					//the number of arguments for the function
 					if  (functionType.getNumArguments() == arguments.length) {
 						
-						
 						String firstParameterString = arguments[0];
+						
+					
+						if ( ! checkParameterValidity(firstParameterString)) {
+							throw new ParserException("Invalid Parameter of " + firstParameterString);
+						}
 					
 						CalculatorNode leftNode = parse(firstParameterString);
+					
+						
+						
 						
 						String secondParamaterString = arguments[1];
+						
+						if (! checkParameterValidity(secondParamaterString)) {
+							throw new ParserException("Invalid Parameter of " + secondParamaterString);
+						}
+						
 					
 						CalculatorNode rightNode = parse(secondParamaterString);
 						
 						functionNode = new FunctionNode(functionType, leftNode, rightNode);
 						return functionNode;
 					} else {
-						System.out.println("Not valid number of arguments for function " + functionType.functionName()
+						String message = ("The expression contained an invalid number of arguments for function " + functionType.functionName()
 											+ " was expecting " + functionType.getNumArguments() + " But got " + arguments.length);
-						throw new ParserException();
+						throw new ParserException(message);
 					}
 				
 				} else if (FunctionType.isLetFunction(functionString)) {
 					return handleLetExpression(expression, i);	
 				} else {
-					throw new ParserException();	//Not a valid function
+					String message = "The expression contains an invalid function " + functionString 
+										+ " is not a valid function";
+					throw new ParserException(message);	//Not a valid function
 				}
 				
 			}	
@@ -137,21 +170,42 @@ public class Parser
 		
 		
 		//return the number at the end of the parsing 
+		
 		if (isNumber)
 		{
 			return new NumberNode(Integer.parseInt(currentNumber.toString()));
-		}
+		} 
 		
 		
 		//If the code reaches here the parser cannot handle expression entered
-		System.out.println("Invalid expression, please check it over and"
-				+ " enter in a valid expression");
-		throw new ParserException();
+		String errorMessage =  "Invalid expression, please check it over and"
+				+ " enter in a valid expression";
 		
-		
+		throw new ParserException(errorMessage);
+			
 	
-	
 		
+	}
+	
+	/**
+	 * 
+	 * @param The parameter to check if it is valid
+	 * @return returns true if the paramater is valid. A valid parameter may either be a function
+	 * or a number or a letter
+	 * 
+	 */
+	
+	private boolean checkParameterValidity(String parameter)
+	{
+		if (parameter.contains("(")) {
+			return true;
+		} else if (parameter.trim().matches("[0-9]+")) {
+			return true;
+		} else if (parameter.trim().matches("[a-zA-Z]+")) {
+			return true;
+		} else  {
+			return false;
+		}
 	}
 
 	/**
@@ -160,7 +214,7 @@ public class Parser
 	 * @return
 	 * @throws ParserException if the expression is not valid
 	 */
-	private CalculatorNode handleLetExpression(String expression, int i) throws ParserException {
+ 	private CalculatorNode handleLetExpression(String expression, int i) throws ParserException {
 		String[] arguments = searchForParameters(expression, i + 1);
 		
 		
@@ -169,6 +223,10 @@ public class Parser
 		
 		if (variableName.matches("[a-zA-Z]+")) {
 			this.validVariables.add(variableName);
+		} else {
+			String errorMessage = "The expression entered contains an invalid variable " + variableName 
+							+ " is not a valid variable ";
+			throw new ParserException(errorMessage);
 		}
 		
 		//now handle the value part of the let statement
@@ -214,6 +272,8 @@ public class Parser
 		throw new ParserException();
 	}
 	
+
+	
 	private static String[] searchForParameters(String expression, int startIndex)
 	{
 		int numOpenBrackets = 0;
@@ -252,73 +312,7 @@ public class Parser
 		
 		
 	}
-	
-	private static CalculatorNode parseArgument(String argument) throws ParserException
-	{
-		boolean seeNumber = false;
-		
-		
-		
-		for (int i = 0; i < argument.length(); i++) 
-		{
-			char currentChar = argument.charAt(i);
-			
-			if (currentChar != ' ' )
-			{
-				//check if the char is a number if it is then set seeNumber to be true
-				
-				if (isNumber(currentChar))
-				{
-					//seeNumber = true;
-					
-					//check if the argument passed 
-					
-					//check if the argument has a 
-					
-					String argumentSubstring = argument.substring(i, argument.length());
-					
-					return processNumber(argumentSubstring);
-					
-					
-				} 
-				
-				
-				
-			}
-		}
-		
-		throw new ParserException();
-	}
-	
-	private static CalculatorNode processNumber(String argument) throws ParserException
-	{
 
-		StringBuilder currentNum = new StringBuilder();
-		for (int i = 0; i < argument.length(); i++)
-		{
-			char currentChar = argument.charAt(i);
-			if (isNumber(currentChar) )
-			{
-				currentNum.append(currentChar);
-			} else if (currentChar == ' ' || currentChar == ',')
-			{
-				//stop building the number and make the node
-				int number = Integer.parseInt( currentNum.toString());
-				
-				return new NumberNode(number);	
-				
-			} else {
-				throw new ParserException();
-			}
-		}
-		
-		int number = Integer.parseInt( currentNum.toString());
-		
-		return new NumberNode(number);	
-		//throw new ParserException();
-		
-	}
-	
 	
 	private static boolean isNumber(char aChar)
 	{
@@ -343,23 +337,7 @@ public class Parser
 		}
 		
 	}
-	/*
-	private static CalculatorNode parseArgument(String expression, int startIndex, int finalIndex)
-	{
-		
-		for (int i = 0; i < finalIndex)
-		
-	}*/
-	
-	public static void main(String[] args)
-	{
-		Parser aParser = new Parser();
-		
-		String[] functionArgs = aParser.searchForParameters("1, 2)  ", 0);
-		for (String arg:functionArgs)
-			System.out.println(arg);
-		
-	
-	}
+
+
 
 }

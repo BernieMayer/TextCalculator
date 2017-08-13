@@ -6,7 +6,8 @@ public class CalculatorTreeEvaluator
 	/**
 	 * This method will take in a node and will traverse the 
 	 * nodes tree to find out the result of that nodes calculations
-	 * This method is recursive in nature. 
+	 * This method is recursive in nature. Nodes that are children of aNode will be procced
+	 * recursively
 	 * 
 	 * @param The currentNode that is being evaluated
 	 * @return The result of evaluating the tree

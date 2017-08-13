@@ -93,6 +93,27 @@ public class ParserTest {
 		}	
 	}
 	
+	@Test
+	public void testMixingOfLettersAndNumbers()
+	{
+		String expression = "add(a1, 1)";
+		
+		try 
+		{
+			Parser aParser = new Parser();
+			aParser.parse(expression);
+			
+			
+		} catch (ParserException e)
+		{
+			e.printStackTrace();
+			
+			return; //An error was thrown
+			//success("Error was thrown");
+		}
+		fail("The expression should throw an exception");
+	}
+	
 	
 	@Test
 	public void testMultipleLetterVariable()
