@@ -103,7 +103,7 @@ public class CalculatorTreeEvaluator
 		} else if (variableExpression.getNodeType() == NodeType.LET)
 		{
 			
-			//This block will replace nested let statments correctly
+			//This block will replace nested let statements correctly
 			//For example
 			//let (a, 5, let(b, add(a, b), mult(a, b)) 
 			// If this code is being run with a as the variable the expression will turn into

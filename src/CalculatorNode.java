@@ -22,7 +22,12 @@ public abstract class CalculatorNode
 	public NodeType getNodeType() {
 		return nodeType;
 	}
-
+	
+	
+	/**
+	 * 
+	 * @param the type of node this instance of CalculatorNode is
+	 */
 	public CalculatorNode(NodeType aNodeType)
 	{
 		this.nodeType = aNodeType;

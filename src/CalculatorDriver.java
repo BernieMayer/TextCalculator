@@ -8,9 +8,11 @@
  * 
  * For example 
  * 
- * $java CalculatorDriver "add(a, 1)"
+ * $java CalculatorDriver "add(1, 1)"
  * 
- * would run the program
+ * would run the program with the input of "add(1, 1)"
+ * 
+ * 
  *
  */
 

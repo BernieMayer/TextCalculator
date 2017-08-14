@@ -14,18 +14,18 @@ public class Parser
 	
 	ArrayList<String> validVariables;
 	
-	enum ParserState {
-		SEARCHING_FOR_FUNCTION,
-		SEARCHING_FOR_CLOSING_BRACKET,
-		SEARCHING_FOR_COMMA
-	}
-	
+
+	/**
+	 * This is the constructor for the Parser
+	 * using this constructor will initialize the list of valid varialbes
+	 */
 	public Parser()
 	{
 		this.validVariables = new ArrayList<String> ();
 	}
 	
 	/**
+	 * 
 	 * 
 	 * @param The expression to parse and get the calculationNode for
 	 * @return Returns a calculationNode which can be proccessed to find the result of
@@ -39,6 +39,10 @@ public class Parser
 	}
 	
 	/**
+	 * 
+	 * The parser uses a scanning system. The parser will go from the start to the end of a
+	 * string. The parser will detect if the string entered in is valid
+	 * and if the string is valid it will parse it and make the proper tree
 	 * 
 	 * @param The expression to parse 
 	 * @param This is the starting point of the expression. This method will only
@@ -84,6 +88,8 @@ public class Parser
 			} else if (isNumber && (currentChar == ' ' || currentChar == ',' 
 													|| (i == (expression.length() - 1))))
 			{
+				//This case means that the number has ended and needs
+				//to be returned as NumberNode
 				String currentNumberString = currentNumber.toString();
 				return new NumberNode(Integer.parseInt(currentNumberString));
 				
@@ -91,72 +97,18 @@ public class Parser
 			
 			
 			//Add non space and non ( to the currentFunction and 
-			//then eventually check if that string is valid
+			//then eventually check if that string is a valid function
 			if (currentChar != ' ' && currentChar != '('  )
 			{
 				isLetter = true;
 				currentFunction.append(currentChar);
 				
 			}
-				
-			
+
+			//Seeing a "(" signifies that a function is starting
 			if (currentChar == '(' )
 			{
-				String functionString = currentFunction.toString();
-				FunctionNode functionNode;
-				FunctionType functionType = null;				
-				
-				if (FunctionType.isSimpleFunction(functionString)) {
-					
-					functionType = FunctionType.getFunctionTypeBasedOnName(functionString);
-				
-					
-					
-					//Separate out the arguments of the current function
-					
-					String[] arguments = searchForParameters(expression, i + 1);
-					
-					//check to see if the number of arguments matches 
-					//the number of arguments for the function
-					if  (functionType.getNumArguments() == arguments.length) {
-						
-						String firstParameterString = arguments[0];
-						
-					
-						if ( ! checkParameterValidity(firstParameterString)) {
-							throw new ParserException("Invalid Parameter of " + firstParameterString);
-						}
-					
-						CalculatorNode leftNode = parse(firstParameterString);
-					
-						
-						
-						
-						String secondParamaterString = arguments[1];
-						
-						if (! checkParameterValidity(secondParamaterString)) {
-							throw new ParserException("Invalid Parameter of " + secondParamaterString);
-						}
-						
-					
-						CalculatorNode rightNode = parse(secondParamaterString);
-						
-						functionNode = new FunctionNode(functionType, leftNode, rightNode);
-						return functionNode;
-					} else {
-						String message = ("The expression contained an invalid number of arguments for function " + functionType.functionName()
-											+ " was expecting " + functionType.getNumArguments() + " But got " + arguments.length);
-						throw new ParserException(message);
-					}
-				
-				} else if (FunctionType.isLetFunction(functionString)) {
-					return handleLetExpression(expression, i);	
-				} else {
-					String message = "The expression contains an invalid function " + functionString 
-										+ " is not a valid function";
-					throw new ParserException(message);	//Not a valid function
-				}
-				
+				return handleSeeingFunction(expression, currentFunction, i);
 			}	
 		}
 		
@@ -177,6 +129,88 @@ public class Parser
 			
 	
 		
+	}
+
+	/**
+	 * @param The current expression
+	 * @param The function that has been built out of the current expression
+	 * @param The index to start from on the current expression
+	 * @return This method will return a calculator node if one can be created.
+	 * @throws ParserException is thrown if an invalid number of arguments
+	 * happens or the user enters an invalid function, eg abc would not be
+	 * a valid function
+	 */
+	private CalculatorNode handleSeeingFunction(String expression, StringBuilder currentFunction, int i)
+			throws ParserException {
+		
+		
+		String functionString = currentFunction.toString();
+		FunctionType functionType = null;				
+		
+		if (FunctionType.isSimpleFunction(functionString)) {
+			
+			functionType = FunctionType.getFunctionTypeBasedOnName(functionString);
+		
+			
+			
+			//Separate out the arguments of the current function
+			
+			String[] arguments = searchForParameters(expression, i + 1);
+			
+			//check to see if the number of arguments matches 
+			//the number of arguments for the function
+			if  (functionType.getNumArguments() == arguments.length) {
+				
+				return handleSimpleFunction(functionType, arguments);
+				
+			} else {
+				String message = ("The expression contained an invalid number of arguments for function " + functionType.functionName()
+									+ " was expecting " + functionType.getNumArguments() + " But got " + arguments.length);
+				throw new ParserException(message);
+			}
+		
+		} else if (FunctionType.isLetFunction(functionString)) {
+		
+			return handleLetExpression(expression, i);	
+		} else {
+			String message = "The expression contains an invalid function " + functionString 
+								+ " is not a valid function";
+			throw new ParserException(message);	//Not a valid function
+		}
+	}
+
+	/**
+	 * @param the functionType to create for the CalculatorNode
+	 * @param the arguments for the function 
+	 * @return returns a functionNode based on the arguments for the function
+	 * @throws ParserException is thrown if the number of arguments is invalid
+	 * eg for add() if three arguments are passed in ParserException is thrown
+	 */
+	private CalculatorNode handleSimpleFunction(FunctionType functionType, String[] arguments) throws ParserException {
+		FunctionNode functionNode;
+		String firstParameterString = arguments[0];
+		
+
+		if ( ! checkParameterValidity(firstParameterString)) {
+			throw new ParserException("Invalid Parameter of " + firstParameterString);
+		}
+
+		CalculatorNode leftNode = parse(firstParameterString);
+
+		
+		
+		
+		String secondParamaterString = arguments[1];
+		
+		if (! checkParameterValidity(secondParamaterString)) {
+			throw new ParserException("Invalid Parameter of " + secondParamaterString);
+		}
+		
+
+		CalculatorNode rightNode = parse(secondParamaterString);
+		
+		functionNode = new FunctionNode(functionType, leftNode, rightNode);
+		return functionNode;
 	}
 	
 	/**
@@ -209,6 +243,10 @@ public class Parser
  	private CalculatorNode handleLetExpression(String expression, int i) throws ParserException {
 		String[] arguments = searchForParameters(expression, i + 1);
 		
+		if (arguments.length != FunctionType.LET.getNumArguments())
+		{
+			throw new ParserException("A let statement in the expression has an invalid number of arguments");
+		}
 		
 		
 		String variableName = arguments[0].trim();
@@ -232,40 +270,16 @@ public class Parser
 		return letNode;
 	}
 	
-	
-	//Note this method will search for an argument in
-	//The string passed in and then will
-	//extract that argument
-	//The string passed in should be without a "("
-	//So using the string mult(3, 2)
-	//Only the string "3, 2)" should be 
-	//passed in
-	private static String searchForParameter(String expression, int startIndex) throws ParserException
-	{
-		int numOpenBrackets = 0;
-		int finalIndex;
-		
-		for (int i = startIndex; i < expression.length(); i++)
-		{
-			char currentChar = expression.charAt(i);
-			//System.out.println("Current char is " + currentChar);
-			if (currentChar == ',' && (numOpenBrackets == 0))
-			{
-				return expression.substring(startIndex, i);
-			} else if (currentChar == ')')
-			{
-				numOpenBrackets--;
-			} else if (currentChar == '(')
-			{
-				numOpenBrackets++;
-			}
-		}
-		
-		throw new ParserException();
-	}
-	
-
-	
+	/**
+	 * 
+	 * @param The expression to search for the parameters of. Generally for this function
+	 * it is expected to be past the ( symbol. So for add(1,1) this function would expect
+	 * 1,1)
+	 * @param The index to start reading from on the expression
+	 * @return A list of parameters based on the expression
+	 * 
+	 */
+ 	
 	private static String[] searchForParameters(String expression, int startIndex)
 	{
 		int numOpenBrackets = 0;
@@ -306,6 +320,12 @@ public class Parser
 	}
 
 	
+	/**
+	 * 
+	 * @param the character to check to see if it a number
+	 * @return this will return true if aChar is a number from 0-9
+	 */
+	//checks if aChar is a number
 	private static boolean isNumber(char aChar)
 	{
 		if (((int) aChar >= (int) '0') && ((int) aChar <= (int) '9'))
@@ -316,7 +336,13 @@ public class Parser
 		}
 	}
 	
+	/**
+	 * 
+	 * @param the character to check to see if it a letter
+	 * @return will return true if aChar is a letter that is from a-z or A-Z
+	 */
 	
+	//checks if aChar is a letter
 	private static boolean isLetter(char aChar)
 	{
 		

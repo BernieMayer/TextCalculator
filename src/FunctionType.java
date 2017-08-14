@@ -1,5 +1,13 @@
 import java.util.HashSet;
 
+/**
+ * 
+ * @author Bernie Mayer
+ * 
+ * This enum is used to keep track of the valid Function Types in this code base
+ *
+ */
+
 public enum FunctionType 
 {
 	ADD("add",   2),
@@ -22,8 +30,11 @@ public enum FunctionType
 	//private static Hashtable<String> functionNames = new Hashtable<String> ();
 	
 	//This static block will iterate through all of the enums's in
-	//the function types and add them to a functionNames list
-	//This makes the FunctionType code more maintainable
+	//the function types and add them to a functionName HashSet
+	//This makes the FunctionType code more maintable 
+	//also allows for a function type to be checked to see if
+	// it is valid in O(1) time instead of O(n) where n is the number of 
+	//functions
 	static 
 	{
 		for (FunctionType aFunctionType:FunctionType.values())

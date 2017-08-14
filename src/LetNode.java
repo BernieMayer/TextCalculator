@@ -1,4 +1,14 @@
 
+/**
+ * 
+ * @author Bernie Mayer
+ * 
+ * This class represents a let node in CalculatorNode tree
+ * A let node needs a variableName, a VariableValue, and the expression the 
+ * variable is used in
+ *
+ */
+
 public class LetNode extends CalculatorNode
 {
 	
@@ -21,16 +31,17 @@ public class LetNode extends CalculatorNode
 	private CalculatorNode variableValue;
 	private CalculatorNode variableExpression;
 	
-	
+	/**
+	 * 
+	 * @param The string that represents the variables name
+	 * @param The value of the variable
+	 * @param The expression that the variable is used in
+	 */
 	public LetNode(String argVariableName, 
 			CalculatorNode argValue,
 			CalculatorNode argExpression)
 	{
 		super(NodeType.LET);
-		
-		
-		//TODO maybe make sure the argVariableName is
-		//valid
 		
 		this.variableName = argVariableName;
 		this.variableValue = argValue;

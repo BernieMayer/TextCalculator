@@ -1,23 +1,23 @@
 
 public class ParserException extends Exception 
 {
-	private String message = null;
+	private String parserMessage = null;
 	
 	public String toString()
 	{
 		
-			return message;
+			return parserMessage;
 		
 	}
 	
 	public ParserException(String message)
 	{
-		this.message = message;
+		this.parserMessage = message;
 	}
 	
 	public ParserException()
 	{
-		message = new String("The expression entered is not valid, please enter a correct expression");
+		parserMessage = new String("The expression entered is not valid, please enter a correct expression");
 	}
 	
 	

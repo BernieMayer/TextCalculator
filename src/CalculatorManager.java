@@ -16,6 +16,10 @@ public class CalculatorManager
 	
 	ArrayList<String> queries;
 	
+	
+	/**
+	 * A general purpose constructor for this CalculatorManager
+	 */
 	public CalculatorManager()
 	{
 		queries = new ArrayList<String> ();
