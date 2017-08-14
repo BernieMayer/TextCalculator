@@ -9,6 +9,9 @@ public class CalculatorTreeEvaluatorTest {
 	@Test
 	public void testEvualatorSimpleAddition()
 	{
+		
+		//Testing the expression of
+		// add(2, 2)
 		NumberNode leftNode = new NumberNode(2);
 		NumberNode rightNode = new NumberNode(2);
 		
@@ -25,6 +28,9 @@ public class CalculatorTreeEvaluatorTest {
 	@Test
 	public void testEvaluatorSimpleMultiplication()
 	{
+		// testing the expression of
+		// mult(3, 4)
+		
 		NumberNode leftNode = new NumberNode(3);
 		NumberNode rightNode = new NumberNode(4);
 		
@@ -41,6 +47,9 @@ public class CalculatorTreeEvaluatorTest {
 	@Test
 	public void testEvaluatorSimpleDivision()
 	{
+		
+		//testing the expression of
+		// div(12, 4)
 		NumberNode leftNode = new NumberNode(12);
 		NumberNode rightNode = new NumberNode(4);
 		
@@ -58,6 +67,9 @@ public class CalculatorTreeEvaluatorTest {
 	@Test
 	public void testEvaluatorSimpleSubraction()
 	{
+		
+		//testing the expression
+		//sub(5, 2)
 		NumberNode leftNode = new NumberNode(5);
 		NumberNode rightNode = new NumberNode(2);
 		
@@ -74,6 +86,10 @@ public class CalculatorTreeEvaluatorTest {
 	@Test
 	public void testSimpleExpression()
 	{
+		
+		//testing the expression of
+		// add(2, add(2, 2))
+		//
 		NumberNode leftNode = new NumberNode(2);
 		FunctionNode rightNode = new FunctionNode(FunctionType.ADD, 
 									new NumberNode(2), new NumberNode(2));
@@ -92,6 +108,10 @@ public class CalculatorTreeEvaluatorTest {
 	@Test
 	public void testMultiplicationExpression()
 	{
+		
+		//testing the expression of 
+		// mult(mult(3,2), mult(2,2))
+		
 		
 		FunctionNode leftNode = new FunctionNode(FunctionType.MULT,
 												new NumberNode(3),
@@ -115,7 +135,8 @@ public class CalculatorTreeEvaluatorTest {
 	@Test
 	public void testDivisionExpression()
 	{
-		
+		//Testing the expression of
+		//mult( div(6,2), mult(2, 2))
 		FunctionNode leftNode = new FunctionNode(FunctionType.DIV,
 												new NumberNode(6),
 												new NumberNode(2));
